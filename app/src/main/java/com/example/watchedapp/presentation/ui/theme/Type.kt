@@ -1,4 +1,4 @@
-package com.example.watchedapp.ui.theme
+package com.example.watchedapp.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

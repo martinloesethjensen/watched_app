@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Watched App</string>
+    <string name="loading">Loading…</string>
+    <string name="loading_failed">Loading failed.</string>
 </resources>
