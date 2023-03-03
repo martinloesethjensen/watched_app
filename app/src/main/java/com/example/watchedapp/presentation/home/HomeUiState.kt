@@ -1,4 +1,4 @@
-package com.example.watchedapp.presentation
+package com.example.watchedapp.presentation.home
 
 sealed interface HomeUiState {
     // TODO: change watched type
