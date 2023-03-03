@@ -2,8 +2,6 @@ package com.example.watchedapp.data.repositories.config
 
 import com.example.watchedapp.data.models.config.ConfigResult
 import com.example.watchedapp.network.ConfigNetworkDataSource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 interface ConfigRepository {
