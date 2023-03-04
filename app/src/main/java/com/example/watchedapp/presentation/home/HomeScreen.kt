@@ -13,15 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.watchedapp.R
 import com.example.watchedapp.presentation.ui.theme.WatchedAppTheme
 
 @Composable
-internal fun HomeScreen(
+internal fun HomeRoute(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = viewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     val configUiState by homeViewModel.configUiState.collectAsStateWithLifecycle()
 
