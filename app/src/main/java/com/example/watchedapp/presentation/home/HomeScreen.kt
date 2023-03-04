@@ -20,36 +20,46 @@ import com.example.watchedapp.presentation.ui.theme.WatchedAppTheme
 
 @Composable
 internal fun HomeRoute(
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     val configUiState by homeViewModel.configUiState.collectAsStateWithLifecycle()
 
-    HomeScreen(modifier = modifier, configUiState = configUiState)
+    HomeScreen(
+        modifier = modifier,
+        configUiState = configUiState,
+        onSearchClick = onSearchClick
+    )
 }
 
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
     configUiState: ConfigUiState,
+    onSearchClick: () -> Unit,
 ) {
     when (configUiState) {
         ConfigUiState.Loading -> LoadingScreen(modifier)
-        is ConfigUiState.Success -> SuccessScreen(result = listOf())
+        is ConfigUiState.Success -> SuccessScreen(
+            result = listOf(),
+            onSearchClick = onSearchClick,
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuccessScreen(modifier: Modifier = Modifier, result: List<String>) {
+fun SuccessScreen(
+    modifier: Modifier = Modifier,
+    result: List<String>,
+    onSearchClick: () -> Unit,
+) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
             Text(text = "AppBar title")
         }, actions = {
-            IconButton(onClick = {
-                // TODO: navigate to search screen
-
-            }) {
+            IconButton(onClick = onSearchClick) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     /// TODO: make into string
@@ -101,9 +111,12 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingScreenPreview() {
+fun HomeScreenLoading() {
     WatchedAppTheme {
-        LoadingScreen()
+        HomeScreen(
+            configUiState = ConfigUiState.Loading,
+            onSearchClick = {},
+        )
     }
 }
 
@@ -127,6 +140,6 @@ fun EmptyHomeBodyPreview() {
 @Composable
 fun ResultScreenPreview() {
     WatchedAppTheme {
-        SuccessScreen(result = listOf())
+        SuccessScreen(result = listOf(), onSearchClick = {})
     }
 }

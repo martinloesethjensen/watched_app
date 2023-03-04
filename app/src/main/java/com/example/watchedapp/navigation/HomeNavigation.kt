@@ -12,8 +12,8 @@ fun NavController.navigateToHome(navOptions: NavOptions? = null) {
     this.navigate(homeNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(onSearchClick: () -> Unit) {
     composable(route = homeNavigationRoute) {
-        HomeRoute()
+        HomeRoute(onSearchClick)
     }
 }
