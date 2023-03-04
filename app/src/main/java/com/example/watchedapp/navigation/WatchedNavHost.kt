@@ -16,6 +16,7 @@ fun WatchedNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeScreen()
+        searchScreen()
+        homeScreen(navController::navigateToSearch)
     }
 }
