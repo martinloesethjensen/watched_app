@@ -1,6 +1,5 @@
 package com.example.watchedapp.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -10,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,10 +33,9 @@ internal fun HomeScreen(
     modifier: Modifier = Modifier,
     configUiState: ConfigUiState,
 ) {
-    Log.d("HomeScreen", configUiState.toString())
     when (configUiState) {
         ConfigUiState.Loading -> LoadingScreen(modifier)
-        is ConfigUiState.Success -> SuccessScreen(result = arrayListOf())
+        is ConfigUiState.Success -> SuccessScreen(result = listOf())
     }
 }
 
@@ -48,8 +47,8 @@ fun SuccessScreen(modifier: Modifier = Modifier, result: List<String>) {
             Text(text = "AppBar title")
         }, actions = {
             IconButton(onClick = {
-                Log.d("WATCHED_SCREEN", "Clicked search button")
                 // TODO: navigate to search screen
+
             }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
@@ -59,12 +58,27 @@ fun SuccessScreen(modifier: Modifier = Modifier, result: List<String>) {
             }
         })
     }, content = { innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding, verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-
+        if (result.isNotEmpty()) {
+            LazyColumn(
+                contentPadding = innerPadding, verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item {
+                    Text(text = result.toString(), color = Color.Green)
+                }
+            }
+        } else {
+            EmptyHomeBody(modifier.padding(innerPadding))
         }
     })
+}
+
+@Composable
+fun EmptyHomeBody(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
+    ) {
+        Text(text = stringResource(R.string.emptyHomeText))
+    }
 }
 
 @Composable
@@ -103,8 +117,16 @@ fun ErrorScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
+fun EmptyHomeBodyPreview() {
+    WatchedAppTheme {
+        EmptyHomeBody()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
 fun ResultScreenPreview() {
     WatchedAppTheme {
-        SuccessScreen(result = listOf("1", "2", "3"))
+        SuccessScreen(result = listOf())
     }
 }
