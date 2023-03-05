@@ -3,4 +3,11 @@
     <string name="loading">Loading…</string>
     <string name="loading_failed">Loading failed.</string>
     <string name="emptyHomeText">Nothing has been added to your watchlist.</string>
+    <string name="searchIconContentDescription">Search for movies or shows</string>
+    <string name="homeAppBarTitle">Home</string>
+    <string name="searchAppBarTitle">Search</string>
+    <string name="backButtonContentDescription">Back button</string>
+    <string name="clearSearchFieldContentDescription">Clear search field.</string>
+    <string name="searchFieldPlaceholder">Type to search...</string>
+    <string name="completeSearchContentDescription">Complete search.</string>
 </resources>
