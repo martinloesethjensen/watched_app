@@ -57,13 +57,12 @@ fun SuccessScreen(
 ) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
-            Text(text = "AppBar title")
+            Text(text = stringResource(R.string.homeAppBarTitle))
         }, actions = {
-            IconButton(onClick = onSearchClick) {
+            IconButton(onSearchClick) {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    /// TODO: make into string
-                    contentDescription = "Search for movies or shows",
+                    contentDescription = stringResource(R.string.searchIconContentDescription),
                 )
             }
         })
