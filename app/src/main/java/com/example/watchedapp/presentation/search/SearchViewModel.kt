@@ -3,8 +3,8 @@ package com.example.watchedapp.presentation.search
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchedapp.core.result.Result
-import com.example.watchedapp.core.result.asResult
+import com.example.watchedapp.domain.core.result.Result
+import com.example.watchedapp.domain.core.result.asResult
 import com.example.watchedapp.data.repositories.search.SearchQuery
 import com.example.watchedapp.domain.usecases.GetSearchResultsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

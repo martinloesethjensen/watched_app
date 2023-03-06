@@ -1,5 +1,6 @@
 package com.example.watchedapp.data.models.search
 
+import com.example.watchedapp.database.models.WatchlistEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -37,4 +38,21 @@ data class SearchMovieResult(
     val voteAverage: Double = 0.0,
     @SerialName("vote_count")
     val voteCount: Int = 0,
+)
+
+fun SearchMovieResult.asEntity() = WatchlistEntity(
+    id,
+    adult,
+    title,
+    backdropPath,
+    originalLanguage,
+    originalTitle,
+    overview,
+    posterPath,
+    genreIds,
+    popularity,
+    releaseDate,
+    video,
+    voteAverage,
+    voteCount
 )
