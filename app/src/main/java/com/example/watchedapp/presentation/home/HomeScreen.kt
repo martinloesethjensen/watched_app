@@ -41,7 +41,9 @@ internal fun HomeScreen(
 ) {
     when (configUiState) {
         ConfigUiState.Loading -> LoadingScreen(modifier)
+        ConfigUiState.Failure -> ErrorScreen(modifier)
         is ConfigUiState.Success -> SuccessScreen(
+            modifier = modifier,
             result = listOf(),
             onSearchClick = onSearchClick,
         )

@@ -1,30 +1,46 @@
 package com.example.watchedapp.presentation.search
 
-import androidx.compose.foundation.layout.padding
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import com.example.watchedapp.R
+import com.example.watchedapp.data.models.search.SearchMovieResults
 
 @Composable
 fun SearchRoute(
-    onBackClick: () -> Unit, searchViewModel: SearchViewModel = viewModel()
+    onBackClick: () -> Unit, searchViewModel: SearchViewModel = hiltViewModel()
 ) {
+    val searchUiState by searchViewModel.searchUiState.collectAsStateWithLifecycle()
+    Log.d("SearchRoute", searchUiState.toString())
     SearchScreen(
+        searchUiState = searchUiState,
         onBackClick = onBackClick,
         onClearClick = searchViewModel::clearSearch,
         onSearch = searchViewModel::search,
@@ -34,6 +50,7 @@ fun SearchRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
+    searchUiState: SearchUiState,
     onBackClick: () -> Unit,
     onClearClick: () -> Unit,
     onSearch: (TextFieldValue) -> Unit,
@@ -48,6 +65,7 @@ fun SearchScreen(
                 value = query,
                 onValueChange = {
                     query = it
+                    if (it.text.length >= 2) onSearch(it)
                 },
                 placeholder = { Text(text = stringResource(R.string.searchFieldPlaceholder)) },
                 singleLine = true,
@@ -66,13 +84,6 @@ fun SearchScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
             )
-        }, actions = {
-            if (query.text.isNotBlank()) IconButton(onClick = { onSearch(query) }) {
-                Icon(
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = stringResource(R.string.completeSearchContentDescription),
-                )
-            }
         }, navigationIcon = {
             IconButton(onBackClick) {
                 Icon(
@@ -82,6 +93,100 @@ fun SearchScreen(
             }
         })
     }, content = {
-        Text(text = "", modifier = Modifier.padding(it))
+        when (searchUiState) {
+            SearchUiState.Initial -> InitialScreen()
+            SearchUiState.Failure -> ErrorScreen()
+            SearchUiState.Loading -> LoadingScreen()
+            is SearchUiState.Success -> SuccessScreen(
+                modifier = Modifier.padding(it),
+                searchResults = searchUiState.searchResults,
+            )
+        }
     })
+}
+
+@Composable
+fun ErrorScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
+    ) {
+        Text(stringResource(R.string.loading_failed))
+    }
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator(modifier = modifier)
+    }
+}
+
+@Composable
+fun InitialScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
+    ) {
+        Text(stringResource(R.string.initialSearchScreenText))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun SuccessScreen(
+    modifier: Modifier = Modifier,
+    searchResults: SearchMovieResults,
+) {
+    if (searchResults.results.isEmpty()) {
+        EmptySearchBody()
+    } else {
+        LazyVerticalStaggeredGrid(
+            modifier = modifier,
+            columns = StaggeredGridCells.Fixed(2),
+            contentPadding = PaddingValues(8.dp),
+        ) {
+
+            items(searchResults.results) { result ->
+                Box(modifier = Modifier.padding(8.dp)) {
+                    Card(
+                        onClick = { /* Do something */ },
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Column {
+                            SubcomposeAsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data("https://image.tmdb.org/t/p/w500${result.posterPath}")
+                                    .crossfade(300)
+                                    .build(),
+                                contentDescription = result.title
+                            ) {
+                                val state = painter.state
+                                if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                } else {
+                                    SubcomposeAsyncImageContent()
+                                }
+                            }
+                            Text(text = result.title)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptySearchBody(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
+    ) {
+        Text("No results...")
+    }
 }
