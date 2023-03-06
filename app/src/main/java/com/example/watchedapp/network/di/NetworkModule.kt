@@ -1,7 +1,9 @@
 package com.example.watchedapp.network.di
 
 import com.example.watchedapp.network.ConfigNetworkDataSource
+import com.example.watchedapp.network.SearchNetworkDataSource
 import com.example.watchedapp.network.retrofit.RetrofitConfigNetwork
+import com.example.watchedapp.network.retrofit.RetrofitSearchNetwork
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +31,14 @@ object NetworkModule {
     @Singleton
     fun providesRetrofitConfigNetwork(): ConfigNetworkDataSource =
         RetrofitConfigNetwork(
+            networkJson = providesNetworkJson(),
+            okHttpCallFactory = okHttpCallFactory()
+        )
+
+    @Provides
+    @Singleton
+    fun providesRetrofitSearchNetwork(): SearchNetworkDataSource =
+        RetrofitSearchNetwork(
             networkJson = providesNetworkJson(),
             okHttpCallFactory = okHttpCallFactory()
         )

@@ -4,31 +4,31 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SearchResults(
-    val page: Int,
-    val results: ArrayList<SearchResult> = arrayListOf(),
+data class SearchMovieResults(
+    val page: Int = 0,
+    val results: List<SearchMovieResult> = listOf(),
     @SerialName("total_pages")
-    val totalPages: Int,
+    val totalPages: Int = 0,
     @SerialName("total_results")
-    val totalResults: Int,
+    val totalResults: Int = 0,
 )
 
 @Serializable
-data class SearchResult(
+data class SearchMovieResult(
     val id: Int,
     val adult: Boolean = false,
     val title: String,
+    @SerialName("backdrop_path")
+    val backdropPath: String?,
     @SerialName("original_language")
     val originalLanguage: String,
     @SerialName("original_title")
     val originalTitle: String,
     val overview: String,
     @SerialName("poster_path")
-    val posterPath: String,
-    @SerialName("media_type")
-    val mediaType: String,
+    val posterPath: String?,
     @SerialName("genre_ids")
-    val genreIds: String,
+    val genreIds: List<Int>,
     val popularity: Double = 0.0,
     @SerialName("release_date")
     val releaseDate: String,
