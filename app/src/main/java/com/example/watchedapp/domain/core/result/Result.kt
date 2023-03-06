@@ -1,4 +1,4 @@
-package com.example.watchedapp.core.result
+package com.example.watchedapp.domain.core.result
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
