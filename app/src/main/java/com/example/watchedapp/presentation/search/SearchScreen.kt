@@ -1,13 +1,10 @@
 package com.example.watchedapp.presentation.search
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -18,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,8 +33,6 @@ fun SearchRoute(
 ) {
     val searchUiState by searchViewModel.searchUiState.collectAsStateWithLifecycle()
     val queryState by searchViewModel.queryState.collectAsStateWithLifecycle()
-
-    Log.d("queryState", queryState)
 
     SearchScreen(
         searchUiState = searchUiState,
@@ -78,8 +72,6 @@ fun SearchScreen(
                         )
                     }
                 },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { onSearch(queryState) }),
             )
         }, navigationIcon = {
             IconButton(onBackClick) {
