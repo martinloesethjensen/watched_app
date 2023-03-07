@@ -49,7 +49,7 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             _queryState
-                .debounce(300.milliseconds)
+                .debounce(750.milliseconds)
                 .distinctUntilChanged()
                 .flatMapLatest { q ->
                     getSearchResultsUseCase(SearchQuery(query = q.trim()))

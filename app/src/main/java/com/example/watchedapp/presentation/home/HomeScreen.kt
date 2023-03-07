@@ -1,21 +1,21 @@
 package com.example.watchedapp.presentation.home
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.watchedapp.R
+import com.example.watchedapp.data.models.search.SearchMovieResult
+import com.example.watchedapp.presentation.ui.components.Center
+import com.example.watchedapp.presentation.ui.components.PosterGrid
 import com.example.watchedapp.presentation.ui.theme.WatchedAppTheme
 
 @Composable
@@ -25,11 +25,14 @@ internal fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     val configUiState by homeViewModel.configUiState.collectAsStateWithLifecycle()
+    val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         modifier = modifier,
         configUiState = configUiState,
-        onSearchClick = onSearchClick
+        homeUiState = homeUiState,
+        onSearchClick = onSearchClick,
+        onCardClick = homeViewModel::removeFromWatchlist
     )
 }
 
@@ -37,25 +40,29 @@ internal fun HomeRoute(
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
     configUiState: ConfigUiState,
+    homeUiState: HomeUiState,
     onSearchClick: () -> Unit,
+    onCardClick: (SearchMovieResult) -> Unit
 ) {
-    when (configUiState) {
-        ConfigUiState.Loading -> LoadingScreen(modifier)
-        ConfigUiState.Failure -> ErrorScreen(modifier)
-        is ConfigUiState.Success -> SuccessScreen(
+    when (homeUiState) {
+        HomeUiState.Loading -> LoadingScreen(modifier)
+        HomeUiState.Failure -> ErrorScreen(modifier)
+        is HomeUiState.Success -> SuccessScreen(
             modifier = modifier,
-            result = listOf(),
+            watchlist = homeUiState.watchlist,
             onSearchClick = onSearchClick,
+            onCardClick = onCardClick,
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SuccessScreen(
     modifier: Modifier = Modifier,
-    result: List<String>,
+    watchlist: List<SearchMovieResult>,
     onSearchClick: () -> Unit,
+    onCardClick: (SearchMovieResult) -> Unit
 ) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
@@ -69,43 +76,35 @@ fun SuccessScreen(
             }
         })
     }, content = { innerPadding ->
-        if (result.isNotEmpty()) {
-            LazyColumn(
-                contentPadding = innerPadding, verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    Text(text = result.toString(), color = Color.Green)
-                }
-            }
-        } else {
+        if (watchlist.isEmpty()) {
             EmptyHomeBody(modifier.padding(innerPadding))
+        } else {
+            PosterGrid(
+                modifier = modifier.padding(innerPadding),
+                movieResults = watchlist,
+                onCardClick = onCardClick
+            )
         }
     })
 }
 
 @Composable
 fun EmptyHomeBody(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
-    ) {
+    Center(modifier) {
         Text(text = stringResource(R.string.emptyHomeText))
     }
 }
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
-    ) {
+    Center(modifier) {
         CircularProgressIndicator(modifier = modifier)
     }
 }
 
 @Composable
 fun ErrorScreen(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()
-    ) {
+    Center(modifier) {
         Text(stringResource(R.string.loading_failed))
     }
 }
@@ -117,6 +116,8 @@ fun HomeScreenLoading() {
         HomeScreen(
             configUiState = ConfigUiState.Loading,
             onSearchClick = {},
+            homeUiState = HomeUiState.Loading,
+            onCardClick = {},
         )
     }
 }
@@ -141,6 +142,10 @@ fun EmptyHomeBodyPreview() {
 @Composable
 fun ResultScreenPreview() {
     WatchedAppTheme {
-        SuccessScreen(result = listOf(), onSearchClick = {})
+        SuccessScreen(
+            watchlist = listOf(),
+            onSearchClick = {},
+            onCardClick = {},
+        )
     }
 }
