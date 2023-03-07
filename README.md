@@ -1,3 +1,3 @@
 # watched_app
 
-A simple app to search for movies and shows to add to a local watchlist.
+A simple app to search for movies to add to a local watchlist.
