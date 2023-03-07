@@ -14,15 +14,11 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,19 +27,26 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.example.watchedapp.R
+import com.example.watchedapp.data.models.search.SearchMovieResult
 import com.example.watchedapp.data.models.search.SearchMovieResults
 
 @Composable
 fun SearchRoute(
-    onBackClick: () -> Unit, searchViewModel: SearchViewModel = hiltViewModel()
+    onBackClick: () -> Unit,
+    searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     val searchUiState by searchViewModel.searchUiState.collectAsStateWithLifecycle()
-    Log.d("SearchRoute", searchUiState.toString())
+    val queryState by searchViewModel.queryState.collectAsStateWithLifecycle()
+
+    Log.d("queryState", queryState)
+
     SearchScreen(
         searchUiState = searchUiState,
+        queryState = queryState,
         onBackClick = onBackClick,
         onClearClick = searchViewModel::clearSearch,
         onSearch = searchViewModel::search,
+        onCardClick = searchViewModel::addToWatchlist
     )
 }
 
@@ -51,30 +54,24 @@ fun SearchRoute(
 @Composable
 fun SearchScreen(
     searchUiState: SearchUiState,
+    queryState: String,
     onBackClick: () -> Unit,
     onClearClick: () -> Unit,
-    onSearch: (TextFieldValue) -> Unit,
+    onSearch: (String) -> Unit,
+    onCardClick: (SearchMovieResult) -> Unit,
 ) {
-    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
-
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
             OutlinedTextField(
-                value = query,
-                onValueChange = {
-                    query = it
-                    if (it.text.length >= 2) onSearch(it)
-                },
+                value = queryState,
+                onValueChange = { onSearch(it) },
                 placeholder = { Text(text = stringResource(R.string.searchFieldPlaceholder)) },
                 singleLine = true,
                 maxLines = 1,
                 trailingIcon = {
-                    if (query.text.isNotBlank()) IconButton(onClick = {
-                        query = TextFieldValue()
-                        onClearClick()
-                    }) {
+                    if (queryState.isNotBlank()) IconButton(
+                        onClick = { onClearClick() },
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
                             contentDescription = stringResource(R.string.clearSearchFieldContentDescription),
@@ -82,7 +79,7 @@ fun SearchScreen(
                     }
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
+                keyboardActions = KeyboardActions(onSearch = { onSearch(queryState) }),
             )
         }, navigationIcon = {
             IconButton(onBackClick) {
@@ -100,6 +97,7 @@ fun SearchScreen(
             is SearchUiState.Success -> SuccessScreen(
                 modifier = Modifier.padding(it),
                 searchResults = searchUiState.searchResults,
+                onCardClick = onCardClick
             )
         }
     })
@@ -137,6 +135,7 @@ fun InitialScreen(modifier: Modifier = Modifier) {
 fun SuccessScreen(
     modifier: Modifier = Modifier,
     searchResults: SearchMovieResults,
+    onCardClick: (SearchMovieResult) -> Unit,
 ) {
     if (searchResults.results.isEmpty()) {
         EmptySearchBody()
@@ -150,7 +149,7 @@ fun SuccessScreen(
             items(searchResults.results) { result ->
                 Box(modifier = Modifier.padding(8.dp)) {
                     Card(
-                        onClick = { /* Do something */ },
+                        onClick = { onCardClick(result) },
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Column {
