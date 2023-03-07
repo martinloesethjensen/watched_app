@@ -38,10 +38,14 @@ class SearchViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     fun search(query: String) {
+        /// early return if user tries to search for the same query
+        if (_queryState.value == query) return
 
         _queryState.value = query
 
-        if (query.isBlank() or (query.length < 2)) return
+        val queryStateValue = _queryState.value
+
+        if (queryStateValue.isBlank() or (queryStateValue.length < 2)) return
 
         viewModelScope.launch {
             _queryState
