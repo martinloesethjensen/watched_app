@@ -2,6 +2,7 @@ package com.example.watchedapp.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.watchedapp.data.models.search.SearchMovieResult
 import com.example.watchedapp.domain.core.result.Result
 import com.example.watchedapp.domain.core.result.asResult
 import com.example.watchedapp.domain.usecases.GetConfigUseCase
@@ -52,9 +53,9 @@ class HomeViewModel @Inject constructor(
                 initialValue = ConfigUiState.Loading,
             )
 
-    fun removeFromWatchlist(id: Int) {
+    fun removeFromWatchlist(movie: SearchMovieResult) {
         viewModelScope.launch {
-            removeFromWatchlistUseCase(id)
+            removeFromWatchlistUseCase(movie.id)
         }
     }
 }
