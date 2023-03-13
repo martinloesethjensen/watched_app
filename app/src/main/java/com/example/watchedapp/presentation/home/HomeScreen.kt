@@ -24,12 +24,10 @@ internal fun HomeRoute(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val configUiState by homeViewModel.configUiState.collectAsStateWithLifecycle()
-    val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         modifier = modifier,
-        configUiState = configUiState,
         homeUiState = homeUiState,
         onSearchClick = onSearchClick,
         onCardClick = homeViewModel::removeFromWatchlist
@@ -39,7 +37,6 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
-    configUiState: ConfigUiState,
     homeUiState: HomeUiState,
     onSearchClick: () -> Unit,
     onCardClick: (SearchMovieResult) -> Unit
@@ -114,7 +111,6 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
 fun HomeScreenLoading() {
     WatchedAppTheme {
         HomeScreen(
-            configUiState = ConfigUiState.Loading,
             onSearchClick = {},
             homeUiState = HomeUiState.Loading,
             onCardClick = {},

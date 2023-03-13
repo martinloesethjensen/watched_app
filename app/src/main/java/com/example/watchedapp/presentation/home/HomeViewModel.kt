@@ -9,10 +9,7 @@ import com.example.watchedapp.domain.usecases.GetConfigUseCase
 import com.example.watchedapp.domain.usecases.GetWatchlistUseCase
 import com.example.watchedapp.domain.usecases.RemoveFromWatchlistUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,34 +20,27 @@ class HomeViewModel @Inject constructor(
     private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
 ) : ViewModel() {
 
-    val homeUiState: StateFlow<HomeUiState> =
-        getWatchlistUseCase()
+    val uiState: StateFlow<HomeUiState> =
+        combine(
+            getWatchlistUseCase(),
+            getConfigUseCase(),
+            ::Pair,
+        )
             .asResult()
             .map {
                 when (it) {
                     is Result.Error -> HomeUiState.Failure
                     Result.Loading -> HomeUiState.Loading
-                    is Result.Success -> HomeUiState.Success(it.data)
+                    is Result.Success -> {
+                        val (watchlist, config) = it.data
+                        HomeUiState.Success(watchlist, config)
+                    }
                 }
-            }.stateIn(
+            }
+            .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(3_000),
+                started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = HomeUiState.Loading
-            )
-
-    val configUiState: StateFlow<ConfigUiState> =
-        getConfigUseCase()
-            .asResult()
-            .map {
-                when (it) {
-                    is Result.Error -> ConfigUiState.Failure
-                    Result.Loading -> ConfigUiState.Loading
-                    is Result.Success -> ConfigUiState.Success(it.data)
-                }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(3_000),
-                initialValue = ConfigUiState.Loading,
             )
 
     fun removeFromWatchlist(movie: SearchMovieResult) {
