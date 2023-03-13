@@ -32,7 +32,7 @@ class SearchViewModel @Inject constructor(
     private val _queryState = MutableStateFlow("")
     val queryState: StateFlow<String> = _queryState.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(3_000),
+        started = SharingStarted.WhileSubscribed(5_000),
         initialValue = "",
     )
 
@@ -41,19 +41,19 @@ class SearchViewModel @Inject constructor(
         /// early return if user tries to search for the same query
         if (_queryState.value == query) return
 
-        _queryState.value = query
+        _queryState.update { query }
 
-        val queryStateValue = _queryState.value
-
-        if (queryStateValue.isBlank() or (queryStateValue.length < 2)) return
+        /// early return if blank, or under length of 2 chars
+        if (query.isBlank() or (query.length < 2)) return
 
         viewModelScope.launch {
             _queryState
                 .debounce(750.milliseconds)
+                .filter { it.isNotBlank() && it.length >= 2 }
                 .distinctUntilChanged()
-                .flatMapLatest { q ->
-                    getSearchResultsUseCase(SearchQuery(query = q.trim()))
-                }.asResult().collect { result ->
+                .flatMapLatest { getSearchResultsUseCase(SearchQuery(it.trim())) }
+                .asResult()
+                .collect { result ->
                     _searchUiState.value = when (result) {
                         is Result.Error -> SearchUiState.Failure
                         Result.Loading -> SearchUiState.Loading
@@ -71,7 +71,7 @@ class SearchViewModel @Inject constructor(
 
     /// Remove any results from ui state
     fun clearSearch() {
-        _queryState.value = ""
+        _queryState.update { "" }
         _searchUiState.value = SearchUiState.Initial
     }
 }
