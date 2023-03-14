@@ -20,16 +20,16 @@ data class SearchMovieResult(
     val adult: Boolean = false,
     val title: String,
     @SerialName("backdrop_path")
-    val backdropPath: String?,
+    val backdropPath: String? = null,
     @SerialName("original_language")
     val originalLanguage: String,
     @SerialName("original_title")
     val originalTitle: String,
     val overview: String,
     @SerialName("poster_path")
-    val posterPath: String?,
+    val posterPath: String? = null,
     @SerialName("genre_ids")
-    val genreIds: List<Int>,
+    val genreIds: List<Int> = listOf(),
     val popularity: Double = 0.0,
     @SerialName("release_date")
     val releaseDate: String,
