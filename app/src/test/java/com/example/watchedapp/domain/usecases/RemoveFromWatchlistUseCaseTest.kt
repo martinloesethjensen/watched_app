@@ -56,7 +56,7 @@ class RemoveFromWatchlistUseCaseTest {
     }
 }
 
-fun testSearchMovieResult(id: Int = 0) = SearchMovieResult(
+private fun testSearchMovieResult(id: Int = 0) = SearchMovieResult(
     id = id,
     title = "",
     originalLanguage = "",
