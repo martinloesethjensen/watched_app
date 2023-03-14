@@ -2,6 +2,8 @@ package com.example.watchedapp.data.repositories.search
 
 import com.example.watchedapp.data.models.search.SearchMovieResults
 import com.example.watchedapp.network.SearchNetworkDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 data class SearchQuery(
@@ -10,13 +12,13 @@ data class SearchQuery(
 )
 
 interface SearchRepository {
-    suspend fun movieSearch(query: SearchQuery): SearchMovieResults
+    fun movieSearch(query: SearchQuery): Flow<SearchMovieResults>
 }
 
 class RemoteSearchRepository @Inject constructor(
     private val network: SearchNetworkDataSource
 ) : SearchRepository {
-    override suspend fun movieSearch(query: SearchQuery): SearchMovieResults {
-        return network.movieSearch(query)
+    override fun movieSearch(query: SearchQuery) = flow {
+        emit(network.movieSearch(query))
     }
 }
