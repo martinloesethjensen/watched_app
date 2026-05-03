@@ -23,7 +23,7 @@ fun WatchedApp(
     Scaffold(
         modifier = Modifier,
         floatingActionButton = {
-            SmallFloatingActionButton(onClick = {appState.navController.navigateToSearch()}) {
+            FloatingActionButton(onClick = { appState.navController.navigateToSearch() }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add movie to watchlist")
             }
         }) { padding ->
@@ -34,6 +34,5 @@ fun WatchedApp(
         ) {
             WatchedNavHost(appState.navController)
         }
-
     }
 }

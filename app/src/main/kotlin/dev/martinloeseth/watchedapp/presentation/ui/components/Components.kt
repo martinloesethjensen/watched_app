@@ -5,18 +5,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
 
@@ -32,7 +36,7 @@ fun Center(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PosterGrid(
     modifier: Modifier = Modifier,
@@ -43,35 +47,47 @@ fun PosterGrid(
         modifier = modifier,
         columns = StaggeredGridCells.Fixed(2),
         contentPadding = PaddingValues(8.dp),
+        verticalItemSpacing = 8.dp,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(movieResults) { result ->
-            Box(modifier = Modifier.padding(8.dp)) {
-                Card(
-                    onClick = { onCardClick(result) },
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Column {
-                        SubcomposeAsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://image.tmdb.org/t/p/w500${result.posterPath}")
-                                .crossfade(300)
-                                .build(),
-                            contentDescription = result.title
-                        ) {
-                            val state = painter.state
-                            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            } else {
-                                SubcomposeAsyncImageContent()
-                            }
-                        }
-                        Text(text = result.title)
-                    }
+        items(
+            items = movieResults,
+            key = { it.id },
+        ) { result ->
+            Card(
+                onClick = { onCardClick(result) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("https://image.tmdb.org/t/p/w500${result.posterPath}")
+                            .crossfade(300)
+                            .memoryCachePolicy(CachePolicy.ENABLED)
+                            .diskCachePolicy(CachePolicy.ENABLED)
+                            .build(),
+                        contentDescription = result.title,
+                        contentScale = ContentScale.Crop,
+                        placeholder = rememberVectorPainter(Icons.Default.Movie),
+                        error = rememberVectorPainter(Icons.Default.BrokenImage),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(2f / 3f), // standard movie poster ratio
+                    )
+                    Text(
+                        text = result.title,
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                    )
+                    Text(
+                        text = result.releaseDate,
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                    )
                 }
             }
         }
