@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WatchlistDao {
     @Query("SELECT * FROM watchlist")
-    fun getWatchlistEntities(): Flow<List<WatchlistEntity>>
+    fun getAll(): Flow<List<WatchlistEntity>>
 
     @Upsert
-    suspend fun upsertWatchlistItem(watchlistItem: WatchlistEntity)
+    suspend fun upsert(watchlistItem: WatchlistEntity)
 
     @Query(
         value = """
@@ -20,5 +20,5 @@ interface WatchlistDao {
             WHERE id = :id
         """
     )
-    suspend fun deleteWatchlistItem(id: Int)
+    suspend fun deleteById(id: Int)
 }

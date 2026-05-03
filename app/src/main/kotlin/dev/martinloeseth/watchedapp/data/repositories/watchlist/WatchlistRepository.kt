@@ -21,10 +21,10 @@ class LocalWatchlistRepository @Inject constructor(
     private val watchlistDao: WatchlistDao,
 ) : WatchlistRepository {
     override suspend fun addToWatchlist(item: SearchMovieResult) =
-        watchlistDao.upsertWatchlistItem(item.asEntity())
+        watchlistDao.upsert(item.asEntity())
 
-    override suspend fun removeFromWatchlist(id: Int) = watchlistDao.deleteWatchlistItem(id)
+    override suspend fun removeFromWatchlist(id: Int) = watchlistDao.deleteById(id)
 
     override fun getWatchlist(): Flow<List<SearchMovieResult>> =
-        watchlistDao.getWatchlistEntities().map { it.map(WatchlistEntity::asExternalModel) }
+        watchlistDao.getAll().map { it.map(WatchlistEntity::asExternalModel) }
 }
