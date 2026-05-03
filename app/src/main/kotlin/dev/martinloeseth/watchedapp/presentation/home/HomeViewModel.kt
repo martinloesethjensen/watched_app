@@ -32,8 +32,8 @@ class HomeViewModel @Inject constructor(
                     is Result.Error -> HomeUiState.Failure
                     Result.Loading -> HomeUiState.Loading
                     is Result.Success -> {
-                        val (watchlist, config) = it.data
-                        HomeUiState.Success(watchlist, config)
+                        val (watchlist, _) = it.data
+                        HomeUiState.Success(watchlist)
                     }
                 }
             }

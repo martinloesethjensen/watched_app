@@ -26,7 +26,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor(BuildConfig.API_KEY)
+    fun providesAuthInterceptor(): AuthInterceptor = AuthInterceptor(BuildConfig.API_KEY)
 
     @Provides
     @Singleton

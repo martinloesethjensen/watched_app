@@ -8,6 +8,5 @@ sealed interface HomeUiState {
     object Failure : HomeUiState
     data class Success(
         val watchlist: List<SearchMovieResult>,
-        val config: ConfigResult,
     ) : HomeUiState
 }
