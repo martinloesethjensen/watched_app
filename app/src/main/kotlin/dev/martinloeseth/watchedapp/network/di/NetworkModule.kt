@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.martinloeseth.watchedapp.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.OkHttpClient
@@ -25,21 +26,33 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun okHttpCallFactory(): Call.Factory = OkHttpClient.Builder().build()
+    fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor(BuildConfig.API_KEY)
 
     @Provides
     @Singleton
-    fun providesRetrofitConfigNetwork(): ConfigNetworkDataSource =
+    fun okHttpCallFactory(authInterceptor: AuthInterceptor): Call.Factory = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
+        .build()
+
+    @Provides
+    @Singleton
+    fun providesRetrofitConfigNetwork(
+        networkJson: Json,
+        okHttpCallFactory: Call.Factory
+    ): ConfigNetworkDataSource =
         RetrofitConfigNetwork(
-            networkJson = providesNetworkJson(),
-            okHttpCallFactory = okHttpCallFactory()
+            networkJson = networkJson,
+            okHttpCallFactory = okHttpCallFactory
         )
 
     @Provides
     @Singleton
-    fun providesRetrofitSearchNetwork(): SearchNetworkDataSource =
+    fun providesRetrofitSearchNetwork(
+        networkJson: Json,
+        okHttpCallFactory: Call.Factory
+    ): SearchNetworkDataSource =
         RetrofitSearchNetwork(
-            networkJson = providesNetworkJson(),
-            okHttpCallFactory = okHttpCallFactory()
+            networkJson = networkJson,
+            okHttpCallFactory = okHttpCallFactory
         )
 }

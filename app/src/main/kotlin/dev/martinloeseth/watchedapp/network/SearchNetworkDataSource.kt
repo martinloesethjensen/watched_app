@@ -5,5 +5,5 @@ import dev.martinloeseth.watchedapp.data.repositories.search.SearchQuery
 
 interface SearchNetworkDataSource {
 
-    suspend fun movieSearch(query: SearchQuery): SearchMovieResults
+    suspend fun search(query: SearchQuery): SearchMovieResults
 }

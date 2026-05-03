@@ -12,7 +12,7 @@ class TestSearchRepository : SearchRepository {
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun movieSearch(query: SearchQuery): Flow<SearchMovieResults> =
+    override fun search(query: SearchQuery): Flow<SearchMovieResults> =
         searchResourceFlow.mapLatest {
             it.copy(results = it.results.filter { movie ->
                 movie.title.contains(

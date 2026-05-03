@@ -12,13 +12,13 @@ data class SearchQuery(
 )
 
 interface SearchRepository {
-    fun movieSearch(query: SearchQuery): Flow<SearchMovieResults>
+    fun search(query: SearchQuery): Flow<SearchMovieResults>
 }
 
 class RemoteSearchRepository @Inject constructor(
     private val network: SearchNetworkDataSource
 ) : SearchRepository {
-    override fun movieSearch(query: SearchQuery) = flow {
-        emit(network.movieSearch(query))
+    override fun search(query: SearchQuery) = flow {
+        emit(network.search(query))
     }
 }

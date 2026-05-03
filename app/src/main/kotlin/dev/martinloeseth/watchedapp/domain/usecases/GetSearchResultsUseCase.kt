@@ -10,5 +10,5 @@ class GetSearchResultsUseCase @Inject constructor(
     private val searchRepository: SearchRepository,
 ) {
     operator fun invoke(query: SearchQuery): Flow<SearchMovieResults> =
-        searchRepository.movieSearch(query)
+        searchRepository.search(query)
 }
