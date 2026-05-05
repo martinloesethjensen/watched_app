@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ fun MovieDetailsRoute(
     MovieDetailsScreen(
         uiState = uiState,
         onBackClick = onBackClick,
+        onToggleWatchlist = viewModel::toggleWatchlist,
     )
 }
 
@@ -47,6 +49,7 @@ fun MovieDetailsRoute(
 fun MovieDetailsScreen(
     uiState: MovieDetailsUiState,
     onBackClick: () -> Unit,
+    onToggleWatchlist: (MovieDetails) -> Unit,
 ) {
     when (uiState) {
         MovieDetailsUiState.Loading -> Center { CircularProgressIndicator() }
@@ -55,6 +58,7 @@ fun MovieDetailsScreen(
             movieDetails = uiState.movieDetails,
             isInWatchlist = uiState.isInWatchlist,
             onBackClick = onBackClick,
+            onToggleWatchlist = onToggleWatchlist,
         )
     }
 }
@@ -65,6 +69,7 @@ private fun MovieDetailsContent(
     movieDetails: MovieDetails,
     isInWatchlist: Boolean,
     onBackClick: () -> Unit,
+    onToggleWatchlist: (MovieDetails) -> Unit,
 ) {
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedContentScope = LocalAnimatedContentScope.current
@@ -166,9 +171,10 @@ private fun MovieDetailsContent(
                     GenreRow(genres = movieDetails.genres)
                 }
 
-                if (isInWatchlist) {
-                    WatchlistBadge()
-                }
+                WatchlistChip(
+                    inWatchlist = isInWatchlist,
+                    onClick = { onToggleWatchlist(movieDetails) },
+                )
 
                 if (movieDetails.overview.isNotBlank()) {
                     Spacer(Modifier.height(4.dp))
@@ -195,15 +201,16 @@ private fun GenreRow(genres: List<Genre>) {
 }
 
 @Composable
-private fun WatchlistBadge() {
-    AssistChip(
-        onClick = {},
-        label = { Text("In Watchlist") },
+private fun WatchlistChip(inWatchlist: Boolean, onClick: () -> Unit) {
+    FilterChip(
+        selected = inWatchlist,
+        onClick = onClick,
+        label = { Text(if (inWatchlist) "In Watchlist" else "Add to Watchlist") },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Default.Bookmark,
+                imageVector = if (inWatchlist) Icons.Default.Bookmark else Icons.Outlined.BookmarkBorder,
                 contentDescription = null,
-                modifier = Modifier.size(AssistChipDefaults.IconSize),
+                modifier = Modifier.size(FilterChipDefaults.IconSize),
             )
         },
     )
