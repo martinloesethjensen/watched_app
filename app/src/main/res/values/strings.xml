@@ -11,4 +11,6 @@
     <string name="searchFieldPlaceholder">Type to search...</string>
     <string name="completeSearchContentDescription">Complete search.</string>
     <string name="initialSearchScreenText">Please search for movies...</string>
+    <string name="emptySearchText">No results...</string>
+    <string name="settingsIconContentDescription">Settings</string>
 </resources>

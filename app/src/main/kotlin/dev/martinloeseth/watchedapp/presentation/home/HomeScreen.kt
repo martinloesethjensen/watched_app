@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.martinloeseth.watchedapp.R
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.presentation.ui.components.Center
 import dev.martinloeseth.watchedapp.presentation.ui.components.PosterGrid
 import dev.martinloeseth.watchedapp.presentation.ui.theme.WatchedAppTheme
@@ -21,6 +22,8 @@ import dev.martinloeseth.watchedapp.presentation.ui.theme.WatchedAppTheme
 @Composable
 internal fun HomeRoute(
     onSearchClick: () -> Unit,
+    onCardClick: (Int) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -30,7 +33,8 @@ internal fun HomeRoute(
         modifier = modifier,
         homeUiState = homeUiState,
         onSearchClick = onSearchClick,
-        onCardClick = homeViewModel::removeFromWatchlist
+        onCardClick = onCardClick,
+        onSettingsClick = onSettingsClick,
     )
 }
 
@@ -39,7 +43,8 @@ internal fun HomeScreen(
     modifier: Modifier = Modifier,
     homeUiState: HomeUiState,
     onSearchClick: () -> Unit,
-    onCardClick: (SearchMovieResult) -> Unit
+    onCardClick: (Int) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     when (homeUiState) {
         HomeUiState.Loading -> LoadingScreen(modifier)
@@ -49,6 +54,7 @@ internal fun HomeScreen(
             watchlist = homeUiState.watchlist,
             onSearchClick = onSearchClick,
             onCardClick = onCardClick,
+            onSettingsClick = onSettingsClick,
         )
     }
 }
@@ -57,21 +63,29 @@ internal fun HomeScreen(
 @Composable
 fun SuccessScreen(
     modifier: Modifier = Modifier,
-    watchlist: List<SearchMovieResult>,
+    watchlist: List<Movie>,
     onSearchClick: () -> Unit,
-    onCardClick: (SearchMovieResult) -> Unit
+    onCardClick: (Int) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     Scaffold(topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(text = stringResource(R.string.homeAppBarTitle))
-        }, actions = {
-            IconButton(onSearchClick) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(R.string.searchIconContentDescription),
-                )
-            }
-        })
+        CenterAlignedTopAppBar(
+            title = { Text(text = stringResource(R.string.homeAppBarTitle)) },
+            actions = {
+                IconButton(onClick = onSearchClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = stringResource(R.string.searchIconContentDescription),
+                    )
+                }
+                IconButton(onClick = onSettingsClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = stringResource(R.string.settingsIconContentDescription),
+                    )
+                }
+            },
+        )
     }, content = { innerPadding ->
         if (watchlist.isEmpty()) {
             EmptyHomeBody(modifier.padding(innerPadding))
@@ -79,7 +93,7 @@ fun SuccessScreen(
             PosterGrid(
                 modifier = modifier.padding(innerPadding),
                 movieResults = watchlist,
-                onCardClick = onCardClick
+                onCardClick = { movie -> onCardClick(movie.id) },
             )
         }
     })
@@ -114,6 +128,7 @@ fun HomeScreenLoading() {
             onSearchClick = {},
             homeUiState = HomeUiState.Loading,
             onCardClick = {},
+            onSettingsClick = {},
         )
     }
 }
@@ -142,6 +157,7 @@ fun ResultScreenPreview() {
             watchlist = listOf(),
             onSearchClick = {},
             onCardClick = {},
+            onSettingsClick = {},
         )
     }
 }

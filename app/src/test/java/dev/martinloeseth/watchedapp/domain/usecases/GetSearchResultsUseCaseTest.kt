@@ -1,9 +1,9 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResults
 import dev.martinloeseth.watchedapp.data.repositories.search.SearchQuery
 import dev.martinloeseth.watchedapp.data.repositories.search.TestSearchRepository
+import dev.martinloeseth.watchedapp.domain.models.Movie
+import dev.martinloeseth.watchedapp.domain.models.MovieSearchResults
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -35,25 +35,22 @@ class GetSearchResultsUseCaseTest {
         val searchResult = useCase(searchQuery).first()
 
         assert(searchResult.results.none {
-            it.title.contains(
-                searchQuery.query,
-                ignoreCase = true
-            )
+            it.title.contains(searchQuery.query, ignoreCase = true)
         })
         assert(searchResult.results.isEmpty())
     }
 }
 
-private val populatedSearchResult = SearchMovieResults(
+private val populatedSearchResult = MovieSearchResults(
     results = listOf(
-        testSearchMovieResult("Dune"),
-        testSearchMovieResult("dune"),
-        testSearchMovieResult("Dune: Part Two"),
-        testSearchMovieResult("Harry Potter"),
+        testMovie("Dune"),
+        testMovie("dune"),
+        testMovie("Dune: Part Two"),
+        testMovie("Harry Potter"),
     ).mapIndexed { idx, movie -> movie.copy(id = idx + 1) }
 )
 
-private fun testSearchMovieResult(title: String = "") = SearchMovieResult(
+private fun testMovie(title: String = "") = Movie(
     id = 0,
     title = title,
     originalLanguage = "",

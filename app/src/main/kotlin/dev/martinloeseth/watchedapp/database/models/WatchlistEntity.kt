@@ -3,7 +3,7 @@ package dev.martinloeseth.watchedapp.database.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
+import dev.martinloeseth.watchedapp.domain.models.Movie
 
 @Entity(tableName = "watchlist")
 data class WatchlistEntity(
@@ -23,19 +23,12 @@ data class WatchlistEntity(
     @ColumnInfo(name = "vote_count") val voteCount: Int = 0,
 )
 
-fun WatchlistEntity.asExternalModel() = SearchMovieResult(
-    id,
-    adult,
-    title,
-    backdropPath,
-    originalLanguage,
-    originalTitle,
-    overview,
-    posterPath,
-    genreIds,
-    popularity,
-    releaseDate,
-    video,
-    voteAverage,
-    voteCount
+fun WatchlistEntity.asExternalModel() = Movie(
+    id, adult, title, backdropPath, originalLanguage, originalTitle,
+    overview, posterPath, genreIds, popularity, releaseDate, video, voteAverage, voteCount,
+)
+
+fun Movie.asEntity() = WatchlistEntity(
+    id, adult, title, backdropPath, originalLanguage, originalTitle,
+    overview, posterPath, genreIds, popularity, releaseDate, video, voteAverage, voteCount,
 )

@@ -1,6 +1,6 @@
 package dev.martinloeseth.watchedapp.data.repositories.watchlist
 
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
 class TestWatchlistRepository : WatchlistRepository {
-    private val watchlistResourceFlow: MutableSharedFlow<List<SearchMovieResult>> =
+    private val watchlistResourceFlow: MutableSharedFlow<List<Movie>> =
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    val watchlistFlow: Flow<List<SearchMovieResult>> = watchlistResourceFlow.filterNotNull()
+    val watchlistFlow: Flow<List<Movie>> = watchlistResourceFlow.filterNotNull()
 
-    override suspend fun addToWatchlist(item: SearchMovieResult) {
+    override suspend fun addToWatchlist(item: Movie) {
         val updated = watchlistFlow.first()
             .toMutableList()
             .apply { add(item) }
@@ -26,11 +26,9 @@ class TestWatchlistRepository : WatchlistRepository {
         watchlistResourceFlow.tryEmit(updated)
     }
 
-    override fun getWatchlist(): Flow<List<SearchMovieResult>> {
-        return watchlistFlow
-    }
+    override fun getWatchlist(): Flow<List<Movie>> = watchlistFlow
 
-    fun setWatchlistResource(watchlist: List<SearchMovieResult>) {
+    fun setWatchlistResource(watchlist: List<Movie>) {
         watchlistResourceFlow.tryEmit(watchlist)
     }
 }

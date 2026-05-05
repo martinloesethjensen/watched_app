@@ -2,7 +2,7 @@ package dev.martinloeseth.watchedapp.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.domain.core.result.Result
 import dev.martinloeseth.watchedapp.domain.core.result.asResult
 import dev.martinloeseth.watchedapp.domain.usecases.GetConfigUseCase
@@ -43,7 +43,7 @@ class HomeViewModel @Inject constructor(
                 initialValue = HomeUiState.Loading
             )
 
-    fun removeFromWatchlist(movie: SearchMovieResult) {
+    fun removeFromWatchlist(movie: Movie) {
         viewModelScope.launch {
             removeFromWatchlistUseCase(movie.id)
         }

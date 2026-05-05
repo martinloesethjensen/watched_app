@@ -1,5 +1,6 @@
 package dev.martinloeseth.watchedapp.presentation.ui.components
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -22,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
+import dev.martinloeseth.watchedapp.domain.models.Movie
+import dev.martinloeseth.watchedapp.presentation.ui.LocalAnimatedContentScope
+import dev.martinloeseth.watchedapp.presentation.ui.LocalSharedTransitionScope
 
 @Composable
 fun Center(
@@ -40,8 +43,8 @@ fun Center(
 @Composable
 fun PosterGrid(
     modifier: Modifier = Modifier,
-    movieResults: List<SearchMovieResult>,
-    onCardClick: (SearchMovieResult) -> Unit,
+    movieResults: List<Movie>,
+    onCardClick: (Movie) -> Unit,
 ) {
     LazyVerticalStaggeredGrid(
         modifier = modifier,
@@ -53,43 +56,79 @@ fun PosterGrid(
         items(
             items = movieResults,
             key = { it.id },
-        ) { result ->
-            Card(
-                onClick = { onCardClick(result) },
-                modifier = Modifier.fillMaxWidth(),
+        ) { movie ->
+            MovieCard(
+                title = movie.title,
+                posterPath = movie.posterPath,
+                releaseDate = movie.releaseDate,
+                sharedElementKey = "poster-${movie.id}",
+                onClick = { onCardClick(movie) },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun MovieCard(
+    title: String,
+    posterPath: String?,
+    releaseDate: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    sharedElementKey: String? = null,
+) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedContentScope = LocalAnimatedContentScope.current
+
+    Card(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Column {
+            val imageModifier = if (sharedElementKey != null
+                && sharedTransitionScope != null
+                && animatedContentScope != null
             ) {
-                Column {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("https://image.tmdb.org/t/p/w500${result.posterPath}")
-                            .crossfade(300)
-                            .memoryCachePolicy(CachePolicy.ENABLED)
-                            .diskCachePolicy(CachePolicy.ENABLED)
-                            .build(),
-                        contentDescription = result.title,
-                        contentScale = ContentScale.Crop,
-                        placeholder = rememberVectorPainter(Icons.Default.Movie),
-                        error = rememberVectorPainter(Icons.Default.BrokenImage),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(2f / 3f), // standard movie poster ratio
-                    )
-                    Text(
-                        text = result.title,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                    )
-                    Text(
-                        text = result.releaseDate,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                with(sharedTransitionScope) {
+                    Modifier.sharedElement(
+                        rememberSharedContentState(key = sharedElementKey),
+                        animatedVisibilityScope = animatedContentScope,
                     )
                 }
+            } else {
+                Modifier
             }
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://image.tmdb.org/t/p/w500$posterPath")
+                    .crossfade(300)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .build(),
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
+                placeholder = rememberVectorPainter(Icons.Default.Movie),
+                error = rememberVectorPainter(Icons.Default.BrokenImage),
+                modifier = imageModifier
+                    .fillMaxWidth()
+                    .aspectRatio(2f / 3f),
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            )
+            Text(
+                text = releaseDate,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            )
         }
     }
 }

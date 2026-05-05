@@ -1,8 +1,7 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.models.config.ConfigResult
-import dev.martinloeseth.watchedapp.data.models.config.ImagesConfig
 import dev.martinloeseth.watchedapp.data.repositories.config.TestConfigRepository
+import dev.martinloeseth.watchedapp.domain.models.ImageConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -28,9 +27,7 @@ class GetConfigUseCaseTest {
     }
 }
 
-private val sampleConfig = ConfigResult(
-    images = ImagesConfig(
-        baseUrl = "testBaseUrl",
-        secureBaseUrl = ""
-    )
+private val sampleConfig = ImageConfig(
+    baseUrl = "testBaseUrl",
+    secureBaseUrl = ""
 )

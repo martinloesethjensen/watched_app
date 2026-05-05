@@ -1,7 +1,7 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
 import dev.martinloeseth.watchedapp.data.repositories.watchlist.TestWatchlistRepository
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -32,7 +32,7 @@ class GetWatchlistUseCaseTest {
     }
 }
 
-private val sampleWatchlistItem1 = SearchMovieResult(
+private val sampleWatchlistItem1 = Movie(
     id = 1,
     title = "",
     originalLanguage = "",
@@ -41,7 +41,7 @@ private val sampleWatchlistItem1 = SearchMovieResult(
     releaseDate = ""
 )
 
-private val sampleWatchlistItem2 = SearchMovieResult(
+private val sampleWatchlistItem2 = Movie(
     id = 2,
     title = "",
     originalLanguage = "",

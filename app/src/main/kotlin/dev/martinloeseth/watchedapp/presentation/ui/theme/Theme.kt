@@ -1,68 +1,88 @@
 package dev.martinloeseth.watchedapp.presentation.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
+import dev.martinloeseth.watchedapp.data.preferences.ThemeMode
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val LightGreenColorScheme = lightColorScheme(
+    primary = GreenPrimary,
+    onPrimary = GreenOnPrimary,
+    primaryContainer = GreenPrimaryContainer,
+    onPrimaryContainer = GreenOnPrimaryContainer,
+    secondary = GreenSecondary,
+    onSecondary = GreenOnSecondary,
+    secondaryContainer = GreenSecondaryContainer,
+    onSecondaryContainer = GreenOnSecondaryContainer,
+    tertiary = GreenTertiary,
+    onTertiary = GreenOnTertiary,
+    tertiaryContainer = GreenTertiaryContainer,
+    onTertiaryContainer = GreenOnTertiaryContainer,
+    error = GreenError,
+    onError = GreenOnError,
+    errorContainer = GreenErrorContainer,
+    onErrorContainer = GreenOnErrorContainer,
+    background = GreenBackground,
+    onBackground = GreenOnBackground,
+    surface = GreenSurface,
+    onSurface = GreenOnSurface,
+    surfaceVariant = GreenSurfaceVariant,
+    onSurfaceVariant = GreenOnSurfaceVariant,
+    outline = GreenOutline,
+    outlineVariant = GreenOutlineVariant,
+    scrim = GreenScrim,
+    inverseSurface = GreenInverseSurface,
+    inverseOnSurface = GreenInverseOnSurface,
+    inversePrimary = GreenInversePrimary,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkGreenColorScheme = darkColorScheme(
+    primary = GreenPrimaryDark,
+    onPrimary = GreenOnPrimaryDark,
+    primaryContainer = GreenPrimaryContainerDark,
+    onPrimaryContainer = GreenOnPrimaryContainerDark,
+    secondary = GreenSecondaryDark,
+    onSecondary = GreenOnSecondaryDark,
+    secondaryContainer = GreenSecondaryContainerDark,
+    onSecondaryContainer = GreenOnSecondaryContainerDark,
+    tertiary = GreenTertiaryDark,
+    onTertiary = GreenOnTertiaryDark,
+    tertiaryContainer = GreenTertiaryContainerDark,
+    onTertiaryContainer = GreenOnTertiaryContainerDark,
+    error = GreenErrorDark,
+    onError = GreenOnErrorDark,
+    errorContainer = GreenErrorContainerDark,
+    onErrorContainer = GreenOnErrorContainerDark,
+    background = GreenBackgroundDark,
+    onBackground = GreenOnBackgroundDark,
+    surface = GreenSurfaceDark,
+    onSurface = GreenOnSurfaceDark,
+    surfaceVariant = GreenSurfaceVariantDark,
+    onSurfaceVariant = GreenOnSurfaceVariantDark,
+    outline = GreenOutlineDark,
+    outlineVariant = GreenOutlineVariantDark,
+    scrim = GreenScrimDark,
+    inverseSurface = GreenInverseSurfaceDark,
+    inverseOnSurface = GreenInverseOnSurfaceDark,
+    inversePrimary = GreenInversePrimaryDark,
 )
 
 @Composable
 fun WatchedAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
-        }
+    val darkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (darkTheme) DarkGreenColorScheme else LightGreenColorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

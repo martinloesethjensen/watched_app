@@ -1,9 +1,9 @@
 package dev.martinloeseth.watchedapp.network.retrofit
 
 import androidx.compose.ui.util.trace
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResults
 import dev.martinloeseth.watchedapp.data.repositories.search.SearchQuery
 import dev.martinloeseth.watchedapp.network.SearchNetworkDataSource
+import dev.martinloeseth.watchedapp.network.models.MovieSearchResultsNetworkModel
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dev.martinloeseth.watchedapp.BuildConfig
 import kotlinx.serialization.json.Json
@@ -19,7 +19,7 @@ private interface RetrofitSearchNetworkApi {
     suspend fun search(
         @Query("query") query: String,
         @Query("page") page: Int = 1,
-    ): SearchMovieResults
+    ): MovieSearchResultsNetworkModel
 }
 
 class RetrofitSearchNetwork @Inject constructor(
@@ -37,7 +37,7 @@ class RetrofitSearchNetwork @Inject constructor(
             .create(RetrofitSearchNetworkApi::class.java)
     }
 
-    override suspend fun search(query: SearchQuery): SearchMovieResults {
+    override suspend fun search(query: SearchQuery): MovieSearchResultsNetworkModel {
         return networkApi.search(query = query.query, page = query.page)
     }
 }

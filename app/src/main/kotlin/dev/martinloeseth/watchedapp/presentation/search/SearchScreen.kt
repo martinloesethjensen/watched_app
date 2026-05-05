@@ -17,15 +17,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.martinloeseth.watchedapp.R
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResults
+import dev.martinloeseth.watchedapp.domain.models.MovieSearchResults
 import dev.martinloeseth.watchedapp.presentation.ui.components.Center
 import dev.martinloeseth.watchedapp.presentation.ui.components.PosterGrid
 
 @Composable
 fun SearchRoute(
     onBackClick: () -> Unit,
-    searchViewModel: SearchViewModel = hiltViewModel()
+    onCardClick: (Int) -> Unit,
+    searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
     val searchUiState by searchViewModel.searchUiState.collectAsStateWithLifecycle()
     val queryState by searchViewModel.queryState.collectAsStateWithLifecycle()
@@ -36,7 +36,7 @@ fun SearchRoute(
         onBackClick = onBackClick,
         onClearClick = searchViewModel::clearSearch,
         onSearch = searchViewModel::search,
-        onCardClick = searchViewModel::addToWatchlist
+        onCardClick = onCardClick,
     )
 }
 
@@ -48,7 +48,7 @@ fun SearchScreen(
     onBackClick: () -> Unit,
     onClearClick: () -> Unit,
     onSearch: (String) -> Unit,
-    onCardClick: (SearchMovieResult) -> Unit,
+    onCardClick: (Int) -> Unit,
 ) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
@@ -84,13 +84,13 @@ fun SearchScreen(
         })
     }, content = {
         when (searchUiState) {
-            SearchUiState.Initial -> InitialScreen()
-            SearchUiState.Failure -> ErrorScreen()
-            SearchUiState.Loading -> LoadingScreen()
+            SearchUiState.Initial -> InitialScreen(Modifier.padding(it))
+            SearchUiState.Failure -> ErrorScreen(Modifier.padding(it))
+            SearchUiState.Loading -> LoadingScreen(Modifier.padding(it))
             is SearchUiState.Success -> SuccessScreen(
                 modifier = Modifier.padding(it),
                 searchResults = searchUiState.searchResults,
-                onCardClick = onCardClick
+                onCardClick = onCardClick,
             )
         }
     })
@@ -121,8 +121,8 @@ fun InitialScreen(modifier: Modifier = Modifier) {
 @Composable
 fun SuccessScreen(
     modifier: Modifier = Modifier,
-    searchResults: SearchMovieResults,
-    onCardClick: (SearchMovieResult) -> Unit,
+    searchResults: MovieSearchResults,
+    onCardClick: (Int) -> Unit,
 ) {
     if (searchResults.results.isEmpty()) {
         EmptySearchBody()
@@ -130,7 +130,7 @@ fun SuccessScreen(
         PosterGrid(
             modifier = modifier,
             movieResults = searchResults.results,
-            onCardClick = onCardClick
+            onCardClick = { movie -> onCardClick(movie.id) },
         )
     }
 }
@@ -138,6 +138,6 @@ fun SuccessScreen(
 @Composable
 fun EmptySearchBody(modifier: Modifier = Modifier) {
     Center(modifier) {
-        Text("No results...")
+        Text(stringResource(R.string.emptySearchText))
     }
 }

@@ -1,7 +1,7 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.models.search.SearchMovieResult
 import dev.martinloeseth.watchedapp.data.repositories.watchlist.TestWatchlistRepository
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -17,8 +17,8 @@ class RemoveFromWatchlistUseCaseTest {
     fun shouldSuccessfullyRemoveFromWatchlist() = runTest {
         watchlistRepository.setWatchlistResource(
             listOf(
-                testSearchMovieResult(1),
-                testSearchMovieResult(2),
+                testMovie(1),
+                testMovie(2),
             )
         )
 
@@ -37,9 +37,9 @@ class RemoveFromWatchlistUseCaseTest {
     fun shouldNotRemoveFromWatchlist_IfNoneExists() = runTest {
         watchlistRepository.setWatchlistResource(
             listOf(
-                testSearchMovieResult(1),
-                testSearchMovieResult(2),
-                testSearchMovieResult(3),
+                testMovie(1),
+                testMovie(2),
+                testMovie(3),
             )
         )
 
@@ -56,7 +56,7 @@ class RemoveFromWatchlistUseCaseTest {
     }
 }
 
-private fun testSearchMovieResult(id: Int = 0) = SearchMovieResult(
+private fun testMovie(id: Int = 0) = Movie(
     id = id,
     title = "",
     originalLanguage = "",

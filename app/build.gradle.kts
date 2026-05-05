@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.retrofit.kotlinx.serialization.converter)
 
     implementation(libs.coil.compose)
+    implementation(libs.androidx.datastore.preferences)
 
     // Room
     implementation(libs.androidx.room.runtime)

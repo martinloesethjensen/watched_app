@@ -2,6 +2,8 @@ package dev.martinloeseth.watchedapp.data.di
 
 import dev.martinloeseth.watchedapp.data.repositories.config.ConfigRepository
 import dev.martinloeseth.watchedapp.data.repositories.config.RemoteConfigRepository
+import dev.martinloeseth.watchedapp.data.repositories.moviedetails.MovieDetailsRepository
+import dev.martinloeseth.watchedapp.data.repositories.moviedetails.RemoteMovieDetailsRepository
 import dev.martinloeseth.watchedapp.data.repositories.search.RemoteSearchRepository
 import dev.martinloeseth.watchedapp.data.repositories.search.SearchRepository
 import dev.martinloeseth.watchedapp.data.repositories.watchlist.LocalWatchlistRepository
@@ -27,6 +29,11 @@ interface DataModule {
 
     @Binds
     fun bindsWatchlistRepository(
-        watchlistRepository: LocalWatchlistRepository
+        watchlistRepository: LocalWatchlistRepository,
     ): WatchlistRepository
+
+    @Binds
+    fun bindsMovieDetailsRepository(
+        movieDetailsRepository: RemoteMovieDetailsRepository,
+    ): MovieDetailsRepository
 }
