@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.martinloeseth.watchedapp.R
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.domain.models.MovieSearchResults
 import dev.martinloeseth.watchedapp.presentation.ui.components.Center
 import dev.martinloeseth.watchedapp.presentation.ui.components.PosterGrid
@@ -24,7 +25,7 @@ import dev.martinloeseth.watchedapp.presentation.ui.components.PosterGrid
 @Composable
 fun SearchRoute(
     onBackClick: () -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Movie) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
     val searchUiState by searchViewModel.searchUiState.collectAsStateWithLifecycle()
@@ -48,7 +49,7 @@ fun SearchScreen(
     onBackClick: () -> Unit,
     onClearClick: () -> Unit,
     onSearch: (String) -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Movie) -> Unit,
 ) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
@@ -122,7 +123,7 @@ fun InitialScreen(modifier: Modifier = Modifier) {
 fun SuccessScreen(
     modifier: Modifier = Modifier,
     searchResults: MovieSearchResults,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Movie) -> Unit,
 ) {
     if (searchResults.results.isEmpty()) {
         EmptySearchBody()
@@ -130,7 +131,7 @@ fun SuccessScreen(
         PosterGrid(
             modifier = modifier,
             movieResults = searchResults.results,
-            onCardClick = { movie -> onCardClick(movie.id) },
+            onCardClick = onCardClick,
         )
     }
 }

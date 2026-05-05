@@ -1,5 +1,8 @@
 package dev.martinloeseth.watchedapp.domain.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Movie(
     val id: Int,
     val adult: Boolean = false,

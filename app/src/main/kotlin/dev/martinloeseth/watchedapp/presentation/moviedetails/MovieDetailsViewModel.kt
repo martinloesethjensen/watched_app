@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.martinloeseth.watchedapp.domain.core.result.Result
 import dev.martinloeseth.watchedapp.domain.core.result.asResult
 import dev.martinloeseth.watchedapp.domain.models.Movie
-import dev.martinloeseth.watchedapp.domain.models.MovieDetails
 import dev.martinloeseth.watchedapp.domain.usecases.AddToWatchlistUseCase
 import dev.martinloeseth.watchedapp.domain.usecases.GetMovieDetailsUseCase
 import dev.martinloeseth.watchedapp.domain.usecases.GetWatchlistUseCase
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +30,8 @@ class MovieDetailsViewModel @Inject constructor(
     private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
 ) : ViewModel() {
 
-    private val movieId: Int = savedStateHandle.toRoute<Details>().movieId
+    val movie: Movie = Json.decodeFromString(savedStateHandle.toRoute<Details>().movieJson)
+    private val movieId: Int = movie.id
 
     val uiState: StateFlow<MovieDetailsUiState> = combine(
         getMovieDetailsUseCase(movieId).asResult(),
@@ -50,28 +51,14 @@ class MovieDetailsViewModel @Inject constructor(
         initialValue = MovieDetailsUiState.Loading,
     )
 
-    fun toggleWatchlist(movieDetails: MovieDetails) {
+    fun toggleWatchlist() {
         val inWatchlist = (uiState.value as? MovieDetailsUiState.Success)?.isInWatchlist ?: return
         viewModelScope.launch {
             if (inWatchlist) {
-                removeFromWatchlistUseCase(movieDetails.id)
+                removeFromWatchlistUseCase(movie.id)
             } else {
-                addToWatchlistUseCase(movieDetails.toMovie())
+                addToWatchlistUseCase(movie)
             }
         }
     }
 }
-
-private fun MovieDetails.toMovie() = Movie(
-    id = id,
-    title = title,
-    overview = overview,
-    posterPath = posterPath,
-    backdropPath = backdropPath,
-    releaseDate = releaseDate,
-    voteAverage = voteAverage,
-    voteCount = voteCount,
-    originalTitle = title,
-    originalLanguage = "",
-    genreIds = genres.map { it.id },
-)

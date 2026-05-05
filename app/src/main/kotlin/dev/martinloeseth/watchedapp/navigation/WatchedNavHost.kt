@@ -24,12 +24,12 @@ fun WatchedNavHost(
             ) {
                 homeScreen(
                     onSearchClick = navController::navigateToSearch,
-                    onCardClick = { movieId -> navController.navigateToDetails(movieId) },
+                    onCardClick = navController::navigateToDetails,
                     onSettingsClick = navController::navigateToSettings,
                 )
                 searchScreen(
                     onBackClick = navController::popBackStack,
-                    onCardClick = { movieId -> navController.navigateToDetails(movieId) },
+                    onCardClick = navController::navigateToDetails,
                 )
                 detailsScreen(onBackClick = navController::popBackStack)
                 settingsScreen(onBackClick = navController::popBackStack)

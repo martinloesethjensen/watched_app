@@ -8,10 +8,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -25,11 +27,10 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import dev.martinloeseth.watchedapp.domain.models.Genre
+import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.domain.models.MovieDetails
 import dev.martinloeseth.watchedapp.presentation.ui.LocalAnimatedContentScope
 import dev.martinloeseth.watchedapp.presentation.ui.LocalSharedTransitionScope
-import dev.martinloeseth.watchedapp.presentation.ui.components.Center
-import androidx.compose.material.icons.filled.BrokenImage
 
 @Composable
 fun MovieDetailsRoute(
@@ -39,37 +40,20 @@ fun MovieDetailsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MovieDetailsScreen(
+        movie = viewModel.movie,
         uiState = uiState,
         onBackClick = onBackClick,
         onToggleWatchlist = viewModel::toggleWatchlist,
     )
 }
 
-@Composable
-fun MovieDetailsScreen(
-    uiState: MovieDetailsUiState,
-    onBackClick: () -> Unit,
-    onToggleWatchlist: (MovieDetails) -> Unit,
-) {
-    when (uiState) {
-        MovieDetailsUiState.Loading -> Center { CircularProgressIndicator() }
-        MovieDetailsUiState.Failure -> Center { Text("Failed to load movie details.") }
-        is MovieDetailsUiState.Success -> MovieDetailsContent(
-            movieDetails = uiState.movieDetails,
-            isInWatchlist = uiState.isInWatchlist,
-            onBackClick = onBackClick,
-            onToggleWatchlist = onToggleWatchlist,
-        )
-    }
-}
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun MovieDetailsContent(
-    movieDetails: MovieDetails,
-    isInWatchlist: Boolean,
+fun MovieDetailsScreen(
+    movie: Movie,
+    uiState: MovieDetailsUiState,
     onBackClick: () -> Unit,
-    onToggleWatchlist: (MovieDetails) -> Unit,
+    onToggleWatchlist: () -> Unit,
 ) {
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedContentScope = LocalAnimatedContentScope.current
@@ -81,7 +65,7 @@ private fun MovieDetailsContent(
                     with(sharedTransitionScope) {
                         Modifier
                             .sharedElement(
-                                rememberSharedContentState(key = "poster-${movieDetails.id}"),
+                                rememberSharedContentState(key = "poster-${movie.id}"),
                                 animatedVisibilityScope = animatedContentScope,
                             )
                             .fillMaxWidth()
@@ -95,12 +79,12 @@ private fun MovieDetailsContent(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://image.tmdb.org/t/p/w500${movieDetails.posterPath}")
+                        .data("https://image.tmdb.org/t/p/w500${movie.posterPath}")
                         .crossfade(300)
                         .memoryCachePolicy(CachePolicy.ENABLED)
                         .diskCachePolicy(CachePolicy.ENABLED)
                         .build(),
-                    contentDescription = movieDetails.title,
+                    contentDescription = movie.title,
                     contentScale = ContentScale.Crop,
                     error = rememberVectorPainter(Icons.Default.BrokenImage),
                     modifier = imageModifier,
@@ -129,33 +113,15 @@ private fun MovieDetailsContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = movieDetails.title,
+                    text = movie.title,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                 )
 
-                if (movieDetails.tagline.isNotBlank()) {
-                    Text(
-                        text = movieDetails.tagline,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontStyle = FontStyle.Italic,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    if (movieDetails.releaseDate.isNotBlank()) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    if (movie.releaseDate.isNotBlank()) {
                         Text(
-                            text = movieDetails.releaseDate,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    movieDetails.runtime?.let { runtime ->
-                        Text(
-                            text = "${runtime}m",
+                            text = movie.releaseDate,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -163,28 +129,75 @@ private fun MovieDetailsContent(
                 }
 
                 Text(
-                    text = "★ ${"%.1f".format(movieDetails.voteAverage)} (${movieDetails.voteCount} votes)",
+                    text = "★ ${"%.1f".format(movie.voteAverage)} (${movie.voteCount} votes)",
                     style = MaterialTheme.typography.bodyMedium,
                 )
 
-                if (movieDetails.genres.isNotEmpty()) {
-                    GenreRow(genres = movieDetails.genres)
-                }
+                when (uiState) {
+                    MovieDetailsUiState.Loading -> Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
 
-                WatchlistChip(
-                    inWatchlist = isInWatchlist,
-                    onClick = { onToggleWatchlist(movieDetails) },
-                )
-
-                if (movieDetails.overview.isNotBlank()) {
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = movieDetails.overview,
+                    MovieDetailsUiState.Failure -> Text(
+                        text = "Failed to load movie details.",
                         style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+
+                    is MovieDetailsUiState.Success -> MovieDetails(
+                        movieDetails = uiState.movieDetails,
+                        isInWatchlist = uiState.isInWatchlist,
+                        onToggleWatchlist = onToggleWatchlist,
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MovieDetails(
+    movieDetails: MovieDetails,
+    isInWatchlist: Boolean,
+    onToggleWatchlist: () -> Unit,
+) {
+    if (movieDetails.tagline.isNotBlank()) {
+        Text(
+            text = movieDetails.tagline,
+            style = MaterialTheme.typography.bodyMedium,
+            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
+    movieDetails.runtime?.let { runtime ->
+        Text(
+            text = "${runtime}m",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
+    if (movieDetails.genres.isNotEmpty()) {
+        GenreRow(genres = movieDetails.genres)
+    }
+
+    WatchlistChip(
+        inWatchlist = isInWatchlist,
+        onClick = onToggleWatchlist,
+    )
+
+    if (movieDetails.overview.isNotBlank()) {
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = movieDetails.overview,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 

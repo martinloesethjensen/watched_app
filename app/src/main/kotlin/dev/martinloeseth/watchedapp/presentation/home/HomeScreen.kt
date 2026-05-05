@@ -22,7 +22,7 @@ import dev.martinloeseth.watchedapp.presentation.ui.theme.WatchedAppTheme
 @Composable
 internal fun HomeRoute(
     onSearchClick: () -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Movie) -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -43,7 +43,7 @@ internal fun HomeScreen(
     modifier: Modifier = Modifier,
     homeUiState: HomeUiState,
     onSearchClick: () -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Movie) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
     when (homeUiState) {
@@ -65,7 +65,7 @@ fun SuccessScreen(
     modifier: Modifier = Modifier,
     watchlist: List<Movie>,
     onSearchClick: () -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Movie) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
     Scaffold(topBar = {
@@ -93,7 +93,7 @@ fun SuccessScreen(
             PosterGrid(
                 modifier = modifier.padding(innerPadding),
                 movieResults = watchlist,
-                onCardClick = { movie -> onCardClick(movie.id) },
+                onCardClick = onCardClick,
             )
         }
     })
@@ -127,7 +127,7 @@ fun HomeScreenLoading() {
         HomeScreen(
             onSearchClick = {},
             homeUiState = HomeUiState.Loading,
-            onCardClick = {},
+            onCardClick = { _ -> },
             onSettingsClick = {},
         )
     }
@@ -156,7 +156,7 @@ fun ResultScreenPreview() {
         SuccessScreen(
             watchlist = listOf(),
             onSearchClick = {},
-            onCardClick = {},
+            onCardClick = { _ -> },
             onSettingsClick = {},
         )
     }
