@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -87,7 +88,7 @@ fun MovieDetailsScreen(
                     contentDescription = movie.title,
                     contentScale = ContentScale.Crop,
                     error = rememberVectorPainter(Icons.Default.BrokenImage),
-                    modifier = imageModifier,
+                    modifier = imageModifier.clip(MaterialTheme.shapes.medium),
                 )
 
                 IconButton(
