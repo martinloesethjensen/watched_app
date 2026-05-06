@@ -30,6 +30,7 @@ import coil.request.ImageRequest
 import dev.martinloeseth.watchedapp.domain.models.Genre
 import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.domain.models.MovieDetails
+import dev.martinloeseth.watchedapp.domain.models.toLocalDateOrNull
 import dev.martinloeseth.watchedapp.presentation.ui.LocalAnimatedContentScope
 import dev.martinloeseth.watchedapp.presentation.ui.LocalSharedTransitionScope
 
@@ -62,21 +63,22 @@ fun MovieDetailsScreen(
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
             Box {
-                val imageModifier = if (sharedTransitionScope != null && animatedContentScope != null) {
-                    with(sharedTransitionScope) {
+                val imageModifier =
+                    if (sharedTransitionScope != null && animatedContentScope != null) {
+                        with(sharedTransitionScope) {
+                            Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(key = "poster-${movie.id}"),
+                                    animatedVisibilityScope = animatedContentScope,
+                                )
+                                .fillMaxWidth()
+                                .aspectRatio(2f / 3f)
+                        }
+                    } else {
                         Modifier
-                            .sharedElement(
-                                rememberSharedContentState(key = "poster-${movie.id}"),
-                                animatedVisibilityScope = animatedContentScope,
-                            )
                             .fillMaxWidth()
                             .aspectRatio(2f / 3f)
                     }
-                } else {
-                    Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(2f / 3f)
-                }
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -122,7 +124,8 @@ fun MovieDetailsScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     if (movie.releaseDate.isNotBlank()) {
                         Text(
-                            text = movie.releaseDate,
+                            text = movie.releaseDate.toLocalDateOrNull()?.year?.toString()
+                                ?: "Unknown",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

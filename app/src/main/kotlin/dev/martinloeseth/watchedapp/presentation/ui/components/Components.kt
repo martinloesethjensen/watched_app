@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import dev.martinloeseth.watchedapp.domain.models.Movie
+import dev.martinloeseth.watchedapp.domain.models.toLocalDateOrNull
 import dev.martinloeseth.watchedapp.presentation.ui.LocalAnimatedContentScope
 import dev.martinloeseth.watchedapp.presentation.ui.LocalSharedTransitionScope
 
@@ -61,7 +62,7 @@ fun PosterGrid(
             MovieCard(
                 title = movie.title,
                 posterPath = movie.posterPath,
-                releaseDate = movie.releaseDate,
+                releaseYear = movie.releaseDate.toLocalDateOrNull()?.year,
                 sharedElementKey = "poster-${movie.id}",
                 onClick = { onCardClick(movie) },
             )
@@ -74,7 +75,7 @@ fun PosterGrid(
 fun MovieCard(
     title: String,
     posterPath: String?,
-    releaseDate: String,
+    releaseYear: Int?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     sharedElementKey: String? = null,
@@ -125,7 +126,7 @@ fun MovieCard(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
             )
             Text(
-                text = releaseDate,
+                text = releaseYear?.toString() ?: "Unknown",
                 style = MaterialTheme.typography.labelMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

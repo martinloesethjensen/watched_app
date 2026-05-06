@@ -1,6 +1,11 @@
 package dev.martinloeseth.watchedapp.domain.models
 
 import kotlinx.serialization.Serializable
+import java.time.DateTimeException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.FormatStyle
 
 @Serializable
 data class Movie(
@@ -26,3 +31,9 @@ data class MovieSearchResults(
     val totalPages: Int = 0,
     val totalResults: Int = 0,
 )
+
+fun String.toLocalDateOrNull(): LocalDate? {
+    val date = runCatching { LocalDate.parse(this) }.getOrNull()
+    return date
+}
+
