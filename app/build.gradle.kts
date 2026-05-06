@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "dev.martinloeseth.watchedapp"
         versionCode = 1
-        minSdk = 23
+        minSdk = 26
         versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
