@@ -3,7 +3,7 @@ package dev.martinloeseth.watchedapp.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.martinloeseth.watchedapp.data.preferences.ThemeMode
+import dev.martinloeseth.watchedapp.domain.models.ThemeMode
 import dev.martinloeseth.watchedapp.domain.usecases.GetThemeModeUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

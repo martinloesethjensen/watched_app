@@ -5,15 +5,10 @@ import dev.martinloeseth.watchedapp.database.models.WatchlistEntity
 import dev.martinloeseth.watchedapp.database.models.asEntity
 import dev.martinloeseth.watchedapp.database.models.asExternalModel
 import dev.martinloeseth.watchedapp.domain.models.Movie
+import dev.martinloeseth.watchedapp.domain.repositories.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-
-interface WatchlistRepository {
-    suspend fun addToWatchlist(item: Movie)
-    suspend fun removeFromWatchlist(id: Int)
-    fun getWatchlist(): Flow<List<Movie>>
-}
 
 class LocalWatchlistRepository @Inject constructor(
     private val watchlistDao: WatchlistDao,

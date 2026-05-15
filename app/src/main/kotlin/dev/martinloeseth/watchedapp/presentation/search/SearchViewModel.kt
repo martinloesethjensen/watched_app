@@ -2,7 +2,7 @@ package dev.martinloeseth.watchedapp.presentation.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.martinloeseth.watchedapp.data.repositories.search.SearchQuery
+import dev.martinloeseth.watchedapp.domain.models.SearchQuery
 import dev.martinloeseth.watchedapp.domain.core.result.Result
 import dev.martinloeseth.watchedapp.domain.core.result.asResult
 import dev.martinloeseth.watchedapp.domain.usecases.GetSearchResultsUseCase

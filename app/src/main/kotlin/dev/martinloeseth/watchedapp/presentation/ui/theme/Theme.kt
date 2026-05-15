@@ -5,7 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import dev.martinloeseth.watchedapp.data.preferences.ThemeMode
+import dev.martinloeseth.watchedapp.domain.models.ThemeMode
 
 private val LightGreenColorScheme = lightColorScheme(
     primary = GreenPrimary,

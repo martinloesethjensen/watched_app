@@ -1,6 +1,6 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.repositories.moviedetails.MovieDetailsRepository
+import dev.martinloeseth.watchedapp.domain.repositories.MovieDetailsRepository
 import dev.martinloeseth.watchedapp.domain.models.MovieDetails
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

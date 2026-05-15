@@ -1,13 +1,13 @@
 package dev.martinloeseth.watchedapp.data.di
 
-import dev.martinloeseth.watchedapp.data.repositories.config.ConfigRepository
 import dev.martinloeseth.watchedapp.data.repositories.config.RemoteConfigRepository
-import dev.martinloeseth.watchedapp.data.repositories.moviedetails.MovieDetailsRepository
 import dev.martinloeseth.watchedapp.data.repositories.moviedetails.RemoteMovieDetailsRepository
 import dev.martinloeseth.watchedapp.data.repositories.search.RemoteSearchRepository
-import dev.martinloeseth.watchedapp.data.repositories.search.SearchRepository
 import dev.martinloeseth.watchedapp.data.repositories.watchlist.LocalWatchlistRepository
-import dev.martinloeseth.watchedapp.data.repositories.watchlist.WatchlistRepository
+import dev.martinloeseth.watchedapp.domain.repositories.ConfigRepository
+import dev.martinloeseth.watchedapp.domain.repositories.MovieDetailsRepository
+import dev.martinloeseth.watchedapp.domain.repositories.SearchRepository
+import dev.martinloeseth.watchedapp.domain.repositories.WatchlistRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

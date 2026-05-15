@@ -12,7 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.martinloeseth.watchedapp.data.preferences.DataStoreUserPreferencesRepository
-import dev.martinloeseth.watchedapp.data.preferences.UserPreferencesRepository
+import dev.martinloeseth.watchedapp.domain.repositories.UserPreferencesRepository
 import javax.inject.Singleton
 
 @Module
