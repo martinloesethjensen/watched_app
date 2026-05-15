@@ -1,7 +1,7 @@
 package dev.martinloeseth.watchedapp.network.retrofit
 
 import androidx.compose.ui.util.trace
-import dev.martinloeseth.watchedapp.data.repositories.search.SearchQuery
+import dev.martinloeseth.watchedapp.domain.models.SearchQuery
 import dev.martinloeseth.watchedapp.network.SearchNetworkDataSource
 import dev.martinloeseth.watchedapp.network.models.MovieSearchResultsNetworkModel
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory

@@ -1,6 +1,6 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.repositories.watchlist.WatchlistRepository
+import dev.martinloeseth.watchedapp.domain.repositories.WatchlistRepository
 import javax.inject.Inject
 
 class GetWatchlistUseCase @Inject constructor(

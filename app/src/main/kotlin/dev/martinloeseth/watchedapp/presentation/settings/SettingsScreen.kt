@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.martinloeseth.watchedapp.data.preferences.ThemeMode
+import dev.martinloeseth.watchedapp.domain.models.ThemeMode
 
 @Composable
 fun SettingsRoute(

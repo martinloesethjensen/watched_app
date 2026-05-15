@@ -1,7 +1,7 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.preferences.ThemeMode
-import dev.martinloeseth.watchedapp.data.preferences.UserPreferencesRepository
+import dev.martinloeseth.watchedapp.domain.models.ThemeMode
+import dev.martinloeseth.watchedapp.domain.repositories.UserPreferencesRepository
 import javax.inject.Inject
 
 class SetThemeModeUseCase @Inject constructor(

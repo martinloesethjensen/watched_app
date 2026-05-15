@@ -4,16 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import dev.martinloeseth.watchedapp.domain.models.ThemeMode
+import dev.martinloeseth.watchedapp.domain.repositories.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private val THEME_MODE_KEY = stringPreferencesKey("theme_mode")
-
-interface UserPreferencesRepository {
-    fun getThemeMode(): Flow<ThemeMode>
-    suspend fun setThemeMode(mode: ThemeMode)
-}
 
 class DataStoreUserPreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
