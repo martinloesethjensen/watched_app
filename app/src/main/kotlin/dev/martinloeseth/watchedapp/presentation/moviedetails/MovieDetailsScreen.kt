@@ -159,6 +159,8 @@ fun MovieDetailsScreen(
                         onToggleWatchlist = onToggleWatchlist,
                     )
                 }
+
+                Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
             }
         }
     }
