@@ -20,19 +20,5 @@ import dev.martinloeseth.watchedapp.rememberWatchedAppState
 fun WatchedApp(
     appState: WatchedAppState = rememberWatchedAppState(),
 ) {
-    Scaffold(
-        modifier = Modifier,
-        floatingActionButton = {
-            FloatingActionButton(onClick = { appState.navController.navigateToSearch() }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add movie to watchlist")
-            }
-        }) { padding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding),
-        ) {
-            WatchedNavHost(appState.navController)
-        }
-    }
+    WatchedNavHost(appState.navController)
 }
