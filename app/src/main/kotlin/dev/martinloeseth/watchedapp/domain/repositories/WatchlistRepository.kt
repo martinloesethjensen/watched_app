@@ -7,4 +7,5 @@ interface WatchlistRepository {
     suspend fun addToWatchlist(item: Movie)
     suspend fun removeFromWatchlist(id: Int)
     fun getWatchlist(): Flow<List<Movie>>
+    suspend fun setUserRating(id: Int, rating: Int)
 }
