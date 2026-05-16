@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.martinloeseth.watchedapp.database.migrations.MIGRATION_USER_RATING_AND_WATCH_HISTORY
 import javax.inject.Singleton
 
 @Module
@@ -21,5 +22,5 @@ object DatabaseModule {
         context,
         WatchedDatabase::class.java,
         "watched-database"
-    ).build()
+    ).addMigrations(MIGRATION_USER_RATING_AND_WATCH_HISTORY).build()
 }

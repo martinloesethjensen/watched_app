@@ -23,6 +23,7 @@ data class Movie(
     val video: Boolean = false,
     val voteAverage: Double = 0.0,
     val voteCount: Int = 0,
+    val userRating: Int? = null,
 )
 
 data class MovieSearchResults(

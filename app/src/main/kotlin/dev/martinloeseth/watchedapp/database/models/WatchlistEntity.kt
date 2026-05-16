@@ -21,14 +21,17 @@ data class WatchlistEntity(
     val video: Boolean = false,
     @ColumnInfo(name = "vote_average") val voteAverage: Double = 0.0,
     @ColumnInfo(name = "vote_count") val voteCount: Int = 0,
+    @ColumnInfo(name = "user_rating") val userRating: Int? = null,
 )
 
 fun WatchlistEntity.asExternalModel() = Movie(
     id, adult, title, backdropPath, originalLanguage, originalTitle,
     overview, posterPath, genreIds, popularity, releaseDate, video, voteAverage, voteCount,
+    userRating
 )
 
 fun Movie.asEntity() = WatchlistEntity(
     id, adult, title, backdropPath, originalLanguage, originalTitle,
     overview, posterPath, genreIds, popularity, releaseDate, video, voteAverage, voteCount,
+    userRating
 )

@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.martinloeseth.watchedapp.database.dao.WatchHistoryDao
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -14,4 +15,9 @@ object DaosModule {
     fun providesWatchlistDao(
         database: WatchedDatabase,
     ): WatchlistDao = database.watchlistDao()
+
+    @Provides
+    fun providesWatchHistoryDao(
+        database: WatchedDatabase,
+    ): WatchHistoryDao = database.watchHistoryDao()
 }
