@@ -2,6 +2,7 @@ package dev.martinloeseth.watchedapp.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import dev.martinloeseth.watchedapp.database.models.WatchlistEntity
 import kotlinx.coroutines.flow.Flow
@@ -21,4 +22,7 @@ interface WatchlistDao {
         """
     )
     suspend fun deleteById(id: Int)
+
+    @Query("UPDATE watchlist SET user_rating = :rating WHERE id = :id")
+    suspend fun setUserRating(id: Int, rating: Int)
 }

@@ -23,6 +23,6 @@ data class WatchHistoryEntity(
     @ColumnInfo(name = "watched_at") val watchedAt: Long,
 )
 
-fun WatchHistoryEntity.asExternalModel() = WatchEntry(id, movieId, watchedAt)
+fun WatchHistoryEntity.asModel() = WatchEntry(id, movieId, watchedAt)
 
 fun WatchEntry.asEntity() = WatchHistoryEntity(id, movieId, watchedAt)

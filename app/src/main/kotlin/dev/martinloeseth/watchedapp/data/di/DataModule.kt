@@ -12,6 +12,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.martinloeseth.watchedapp.data.repositories.watchhistory.LocalWatchHistoryRepository
+import dev.martinloeseth.watchedapp.domain.repositories.WatchHistoryRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,4 +38,9 @@ interface DataModule {
     fun bindsMovieDetailsRepository(
         movieDetailsRepository: RemoteMovieDetailsRepository,
     ): MovieDetailsRepository
+
+    @Binds
+    fun bindsWatchHistoryRepository(
+        watchHistoryRepository: LocalWatchHistoryRepository,
+    ): WatchHistoryRepository
 }

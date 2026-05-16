@@ -24,7 +24,7 @@ data class WatchlistEntity(
     @ColumnInfo(name = "user_rating") val userRating: Int? = null,
 )
 
-fun WatchlistEntity.asExternalModel() = Movie(
+fun WatchlistEntity.asModel() = Movie(
     id, adult, title, backdropPath, originalLanguage, originalTitle,
     overview, posterPath, genreIds, popularity, releaseDate, video, voteAverage, voteCount,
     userRating
