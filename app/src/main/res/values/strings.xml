@@ -4,6 +4,7 @@
     <string name="loading_failed">Loading failed.</string>
     <string name="emptyHomeText">Nothing has been added to your watchlist.</string>
     <string name="searchIconContentDescription">Search for movies or shows</string>
+    <string name="deleteWatchEntryIconContentDescription">Delete watch entry</string>
     <string name="homeAppBarTitle">Home</string>
     <string name="searchAppBarTitle">Search</string>
     <string name="backButtonContentDescription">Back button</string>
