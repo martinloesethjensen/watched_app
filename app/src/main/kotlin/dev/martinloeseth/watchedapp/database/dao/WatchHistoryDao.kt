@@ -15,7 +15,7 @@ interface WatchHistoryDao {
     fun getForMovie(movieId: Int): Flow<List<WatchHistoryEntity>>
 
     @Query("SELECT DISTINCT movie_id from watch_history")
-    fun getWatchedMovieIds(): Flow<Set<Int>>
+    fun getWatchedMovieIds(): Flow<List<Int>>
 
     @Query("DELETE FROM watch_history WHERE id = :id")
     suspend fun deleteById(id: Int)

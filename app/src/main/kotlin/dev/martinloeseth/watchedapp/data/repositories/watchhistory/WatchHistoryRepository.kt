@@ -15,7 +15,8 @@ class LocalWatchHistoryRepository @Inject constructor(
     override fun getWatchHistory(movieId: Int): Flow<List<WatchEntry>> =
         watchHistoryDao.getForMovie(movieId).map { it.map(WatchHistoryEntity::asModel) }
 
-    override fun getWatchedMovieIds(): Flow<Set<Int>> = watchHistoryDao.getWatchedMovieIds()
+    override fun getWatchedMovieIds(): Flow<Set<Int>> =
+        watchHistoryDao.getWatchedMovieIds().map { it.toSet() }
 
     override suspend fun logWatched(movieId: Int, watchedAt: Long?) = watchHistoryDao.insert(
         WatchHistoryEntity(
