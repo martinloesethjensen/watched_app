@@ -9,9 +9,13 @@ import dev.martinloeseth.watchedapp.domain.core.result.Result
 import dev.martinloeseth.watchedapp.domain.core.result.asResult
 import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.domain.usecases.AddToWatchlistUseCase
+import dev.martinloeseth.watchedapp.domain.usecases.DeleteWatchHistoryEntryUseCase
 import dev.martinloeseth.watchedapp.domain.usecases.GetMovieDetailsUseCase
+import dev.martinloeseth.watchedapp.domain.usecases.GetWatchHistoryUseCase
 import dev.martinloeseth.watchedapp.domain.usecases.GetWatchlistUseCase
+import dev.martinloeseth.watchedapp.domain.usecases.LogWatchedUseCase
 import dev.martinloeseth.watchedapp.domain.usecases.RemoveFromWatchlistUseCase
+import dev.martinloeseth.watchedapp.domain.usecases.SetUserRatingUseCase
 import dev.martinloeseth.watchedapp.navigation.Details
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,8 +30,12 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getMovieDetailsUseCase: GetMovieDetailsUseCase,
     getWatchlistUseCase: GetWatchlistUseCase,
+    private val logWatchedUseCase: LogWatchedUseCase,
+    getWatchHistoryUseCase: GetWatchHistoryUseCase,
+    private val setUserRatingUseCase: SetUserRatingUseCase,
     private val addToWatchlistUseCase: AddToWatchlistUseCase,
     private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
+    private val deleteWatchHistoryEntryUseCase: DeleteWatchHistoryEntryUseCase,
 ) : ViewModel() {
 
     val movie: Movie = Json.decodeFromString(savedStateHandle.toRoute<Details>().movieJson)
@@ -36,14 +44,20 @@ class MovieDetailsViewModel @Inject constructor(
     val uiState: StateFlow<MovieDetailsUiState> = combine(
         getMovieDetailsUseCase(movieId).asResult(),
         getWatchlistUseCase(),
-    ) { detailsResult, watchlist ->
+        getWatchHistoryUseCase(movieId),
+    ) { detailsResult, watchlist, watchHistory ->
         when (detailsResult) {
             is Result.Error -> MovieDetailsUiState.Failure
             Result.Loading -> MovieDetailsUiState.Loading
-            is Result.Success -> MovieDetailsUiState.Success(
-                movieDetails = detailsResult.data,
-                isInWatchlist = watchlist.any { it.id == movieId },
-            )
+            is Result.Success -> {
+                val movieInWatchList = watchlist.firstOrNull { it.id == movieId };
+                MovieDetailsUiState.Success(
+                    movieDetails = detailsResult.data,
+                    isInWatchlist = movieInWatchList != null,
+                    userRating = movieInWatchList?.userRating,
+                    watchHistory = watchHistory,
+                )
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -59,6 +73,25 @@ class MovieDetailsViewModel @Inject constructor(
             } else {
                 addToWatchlistUseCase(movie)
             }
+        }
+    }
+
+    // TODO(mlj): implement datetime selector in UI and parse as timestamp into 'watchedAt'
+    fun logWatched() {
+        viewModelScope.launch {
+            logWatchedUseCase(movieId)
+        }
+    }
+
+    fun setRating(rating: Int) {
+        viewModelScope.launch {
+            setUserRatingUseCase(movieId, rating)
+        }
+    }
+
+    fun removeWatchEntry(id: Int) {
+        viewModelScope.launch {
+            deleteWatchHistoryEntryUseCase(id)
         }
     }
 }
