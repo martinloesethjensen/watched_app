@@ -1,9 +1,9 @@
 package dev.martinloeseth.watchedapp.domain.usecases
 
-import dev.martinloeseth.watchedapp.data.repositories.search.SearchQuery
 import dev.martinloeseth.watchedapp.data.repositories.search.TestSearchRepository
 import dev.martinloeseth.watchedapp.domain.models.Movie
 import dev.martinloeseth.watchedapp.domain.models.MovieSearchResults
+import dev.martinloeseth.watchedapp.domain.models.SearchQuery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

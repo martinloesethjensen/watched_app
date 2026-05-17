@@ -1,6 +1,8 @@
 package dev.martinloeseth.watchedapp.data.repositories.search
 
 import dev.martinloeseth.watchedapp.domain.models.MovieSearchResults
+import dev.martinloeseth.watchedapp.domain.models.SearchQuery
+import dev.martinloeseth.watchedapp.domain.repositories.SearchRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow

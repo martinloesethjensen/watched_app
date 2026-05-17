@@ -1,6 +1,7 @@
 package dev.martinloeseth.watchedapp.data.repositories.config
 
 import dev.martinloeseth.watchedapp.domain.models.ImageConfig
+import dev.martinloeseth.watchedapp.domain.repositories.ConfigRepository
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

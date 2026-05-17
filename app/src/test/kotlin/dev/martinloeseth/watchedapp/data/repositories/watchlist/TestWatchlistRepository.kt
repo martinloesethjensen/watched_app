@@ -1,6 +1,7 @@
 package dev.martinloeseth.watchedapp.data.repositories.watchlist
 
 import dev.martinloeseth.watchedapp.domain.models.Movie
+import dev.martinloeseth.watchedapp.domain.repositories.WatchlistRepository
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,6 +28,10 @@ class TestWatchlistRepository : WatchlistRepository {
     }
 
     override fun getWatchlist(): Flow<List<Movie>> = watchlistFlow
+
+    override suspend fun setUserRating(id: Int, rating: Int) {
+        TODO("Not yet implemented")
+    }
 
     fun setWatchlistResource(watchlist: List<Movie>) {
         watchlistResourceFlow.tryEmit(watchlist)
